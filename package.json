@@ -1,0 +1,32 @@
+{
+  "name": "solidity-metrics",
+  "version": "0.0.1",
+  "description": "Solidity Code Metrics",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConsenSys/solidity-metrics.git"
+  },
+  "keywords": [
+    "solidity",
+    "code",
+    "metrics",
+    "complexity",
+    "risk",
+    "capabilities"
+  ],
+  "author": "tintinweb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ConsenSys/solidity-metrics/issues"
+  },
+  "homepage": "https://github.com/ConsenSys/solidity-metrics#readme",
+  "dependencies": {
+    "sloc": "^0.2.1",
+    "solidity-parser-diligence": "^0.4.18",
+    "surya": "^0.3.6-dev.8"
+  }
+}
