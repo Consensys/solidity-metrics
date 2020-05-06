@@ -10,3 +10,35 @@ Solidity Code Metrics
 The number-crunching enginge behind 📊[tintinweb.solidity-metrics](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-metrics).
 
 ![vscode-solidity-metrics3](https://user-images.githubusercontent.com/2865694/78451004-0252de00-7683-11ea-93d7-4c5dc436a14b.gif)
+
+## Example
+
+```js
+
+const {SolidityMetricsContainer} = require('solidity-metrics');
+
+let options = {
+    basePath:"",
+    inputFileGlobExclusions:undefined,
+    inputFileGlob: undefined,
+    inputFileGlobLimit: undefined,
+    debug:false,
+    repoInfo: {
+        branch: undefined,
+        commit: undefined,
+        remote: undefined
+    }    
+}
+
+let metrics = new SolidityMetricsContainer("metricsContainerName", options);
+
+
+// analyze files
+metrics.analyze(path_to_solidity_file);
+// ...
+metrics.analyze(path_to_solidity_file_N);
+
+// output
+console.log(metrics.totals());
+console.log(metrics.generateReportMarkdown());
+```

@@ -7,6 +7,10 @@
  * */
 
 /*
+Example:
+
+const {SolidityMetricsContainer} = require('solidity-metrics');
+
 let metrics = new SolidityMetricsContainer("containerName", {
         basePath:"",
         inputFileGlobExclusions:undefined,
@@ -30,4 +34,8 @@ let metrics = new SolidityMetricsContainer("containerName", {
     console.log(metrics.generateReportMarkdown());
  */
 
-export { SolidityMetricsContainer } from './metrics';
+const {SolidityMetricsContainer} = require('./metrics');
+
+module.exports = {
+    SolidityMetricsContainer
+};

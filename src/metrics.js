@@ -670,7 +670,7 @@ class SolidityFileMetrics {
         parser.visit(ast, countAll);
 
         // IMPORTANT: fix values caused by the proxy being entered twice by diligence parser for defined handler functions (once to check if handler is available, and for handler call) 
-        Object.keys(countAllHandler).forEach( k => this.metrics.ast[k] ? this.metrics.ast[k] /= 2 : undefined )
+        Object.keys(countAllHandler).forEach( k => this.metrics.ast[k] ? this.metrics.ast[k] /= 2 : undefined );
 
     }
 
