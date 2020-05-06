@@ -7,6 +7,6 @@
 # solidity-metrics
 Solidity Code Metrics
 
-The number-crunching enginge for 📊[tintinweb.solidity-metrics](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-metrics).
+The number-crunching enginge behind 📊[tintinweb.solidity-metrics](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-metrics).
 
 ![vscode-solidity-metrics3](https://user-images.githubusercontent.com/2865694/78451004-0252de00-7683-11ea-93d7-4c5dc436a14b.gif)
