@@ -4,8 +4,9 @@
 </sup><br/><br/>
 
 
-# solidity-metrics
-Solidity Code Metrics
+# Solidity Code Metrics
+
+[🌐](https://www.npmjs.com/package/solidity-code-metrics) `npm install solidity-code-metrics` 
 
 The number-crunching enginge behind 📊[tintinweb.solidity-metrics](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-metrics).
 
