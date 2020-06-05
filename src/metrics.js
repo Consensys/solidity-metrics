@@ -5,7 +5,7 @@
  * 
  * 
  * */
-const parser = require('solidity-parser-diligence');
+const parser = require('@solidity-parser/parser');
 const parserHelpers = require("./parserHelpers");
 
 const fs = require('fs');
