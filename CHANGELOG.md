@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.7
+- updated: surya to 0.4.1-dev.2
+
 ## v0.0.6
 - new: support for solidity `0.6.x`
 - updated: surya to 0.4.0 #49
