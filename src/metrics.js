@@ -194,6 +194,18 @@ class SolidityMetricsContainer {
     generateReportMarkdown(){
 
         let totals = this.totals();
+
+        let suryamdreport;
+
+        try {
+            suryamdreport = surya.mdreport(this.seenFiles).replace("### ","#####").replace("## Sūrya's Description Report","").replace(this.basePathRegex, ""); /* remove surya title, fix layout */
+        } catch(error) {
+            suryamdreport = `\`\`\`
+${error}
+\`\`\``;
+            console.error(error);
+        }
+
         let mdreport_head = `
 [<img width="200" alt="get in touch with Consensys Diligence" src="https://user-images.githubusercontent.com/2865694/56826101-91dcf380-685b-11e9-937c-af49c2510aa0.png">](https://diligence.consensys.net)<br/>
 <sup>
@@ -383,7 +395,7 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 <a onclick="toggleVisibility('surya-mdreport', this)">[➕]</a>
 <div id="surya-mdreport" style="display:none">
-${surya.mdreport(this.seenFiles).replace("### ","#####").replace("## Sūrya's Description Report","").replace(this.basePathRegex, "") /* remove surya title, fix layout */} 
+${suryamdreport} 
 
 </div>
 ____
