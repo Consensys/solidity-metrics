@@ -27,6 +27,7 @@
   "dependencies": {
     "@solidity-parser/parser": "^0.8.2",
     "sloc": "^0.2.1",
+    "solidity-doppelganger-demo": "0.0.4",
     "surya": "^0.4.1"
   }
 }

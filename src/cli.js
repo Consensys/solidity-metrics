@@ -30,7 +30,7 @@ process.argv.slice(1,).forEach(f => {
 });
 
 // output
-console.log(metrics.totals());
-console.log(metrics.generateReportMarkdown());
+//console.log(metrics.totals());
+metrics.generateReportMarkdown().then(text => console.log(text));
 
 

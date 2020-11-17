@@ -49,5 +49,6 @@ metrics.analyze(path_to_solidity_file_N);
 
 // output
 console.log(metrics.totals());
-console.log(metrics.generateReportMarkdown());
+metrics.generateReportMarkdown().then(text => console.log(text));
+// or let text = await metrics.generateReportMarkdown();
 ```

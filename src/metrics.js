@@ -13,8 +13,8 @@ const crypto = require('crypto');
 const sloc = require('sloc');
 
 const surya = require('surya');
+const {SolidityDoppelganger} = require('solidity-doppelganger-demo');
 
-const TSHIRT_HR = Object.freeze({"SMALL":"Small", "MEDIUM":"Medium", "LARGE":"Large", "X_LARGE":"X-Large", "XX_LARGE":"XX-Large", "XXXXXX_LARGE":"XXX-Huge!"});
 const TSHIRT = Object.freeze({"SMALL":1, "MEDIUM":2, "LARGE":3, "X_LARGE":4, "XX_LARGE":5, "XXXXXX_LARGE":6});
 
 const tshirtSizes = {
@@ -86,6 +86,8 @@ const scores = {
     "ContractDefinition:BaseContracts":2,
     ContractDefinition:1,
 };
+
+const doppelGanger = new SolidityDoppelganger(); //load this only once
 
 function capitalFirst(string) 
 {
@@ -191,10 +193,58 @@ class SolidityMetricsContainer {
     /**
      * @note: div id must match the SolidityMetricsContainer.getDotGraphs() object key which is also the div-id!
      */
-    generateReportMarkdown(){
-
+    async generateReportMarkdown(){
+        let that = this;
         let totals = this.totals();
 
+        //ugly hacks ahead! :/
+        async function mergeDoppelganger(doppelgangers){
+            let resolved = (await Promise.all(doppelgangers)).filter(r => Object.keys(r.results).length);
+            if(resolved.length == 0){
+                return;
+            }
+            let first = resolved.shift();
+            for(let r of resolved){
+                for (let x of Object.values(r.results)){
+                    first.addResult(x.target, x.matches)
+                }
+            }
+            return first;
+            //otherwise merge all results 
+        }
+
+        function formatDoppelgangerSection(astHashCompareResults){
+            if(!astHashCompareResults || Object.keys(astHashCompareResults.results).length==0){
+                return "";
+            }
+            let lines = [];
+            for(let result of Object.values(astHashCompareResults.results)){
+                //line |file|contract|doppelganger| 
+                //Deduplicate paths
+                let exact = [];
+                let fuzzy = [];
+
+                for(let m of result.matches){
+                    if(m.options.mode.includes("EXACT")){
+                        exact.push(m.path);
+                    } else {
+                        fuzzy.push(m.path);
+                    }
+                }
+
+                let matchText = [];
+                matchText.push(exact.map((path,i) => `[${i}](${path})`).join(", "));  //exact
+                matchText.push(fuzzy.filter(f => !exact.includes(f)).map((path,i) => `[${i}](${path})`).join(", "));  //fuzzy-exact
+
+                matchText = `exact: [${matchText[0]}]<br/>fuzzy: [${matchText[1]}]`;
+
+                lines.push(`| ${result.target.path ? result.target.path.replace(that.basePath, "") : ""} | ${result.target.name} | ${matchText} |`);
+            }
+            return lines.join("\n");
+        }
+            
+        let doppelganger = await mergeDoppelganger(totals.totals.other.doppelganger);
+        
         let suryamdreport;
 
         try {
@@ -223,6 +273,7 @@ ${error}
     - [Out of Scope](#t-out-of-scope)
         - [Excluded Source Units](#t-out-of-scope-excluded-source-units)
         - [Duplicate Source Units](#t-out-of-scope-duplicate-source-units)
+        - [Doppelganger Contracts](#t-out-of-scope-doppelganger-contracts)
 - [Report Overview](#t-report)
     - [Risk Summary](#t-risk)
     - [Source Lines](#t-source-lines)
@@ -279,6 +330,18 @@ Duplicate Source Units Excluded: **\`${this.seenDuplicates.length}\`**
 | File   |
 |========|
 ${this.seenDuplicates.length ? this.seenDuplicates.map(f => `|${f.replace(this.basePath, "")}|`).join("\n") : "| None |"}
+
+</div>
+
+##### <span id=t-out-of-scope-doppelganger-contracts>Doppelganger Contracts</span>
+
+Doppelganger Contracts: **\`${doppelganger && doppelganger.results ? Object.keys(doppelganger.results).length : 0}\`** 
+
+<a onclick="toggleVisibility('duplicate-files', this)">[➕]</a>
+<div id="duplicate-files" style="display:none">
+| File   | Contract | Doppelganger | 
+|========|==========|==============|
+${formatDoppelgangerSection(doppelganger)}
 
 </div>
 
@@ -475,8 +538,9 @@ class Metric {
             ecrecover: false,
             deploysContract: false
         };
-
-        this.xx = 0;
+        this.other = {
+            doppelganger: []
+        };
     }
     
     
@@ -524,7 +588,7 @@ class Metric {
 
     sumCreateNewMetric(...solidityFileMetrics){
         let result = new Metric();
-
+        
         solidityFileMetrics.forEach(a => {  //arguments
             Object.keys(result).forEach(attrib => {  // metric attribs -> object
                 Object.keys(a.metrics[attrib]).map(function(key, index) { // argument.keys		
@@ -534,6 +598,7 @@ class Metric {
                         result[attrib][key] = result[attrib][key] || a.metrics[attrib][key];
                     else if(Array.isArray(a.metrics[attrib][key]))  // concat arrays -> maybe switch to sets 
                         result[attrib][key] = Array.from(new Set([...result[attrib][key], ...a.metrics[attrib][key]]));
+
                 });
             });
         });
@@ -598,6 +663,12 @@ class SolidityFileMetrics {
             ContractDefinition(node) {
                 that.metrics.ast["ContractDefinition:"+capitalFirst(node.kind)] = ++that.metrics.ast["ContractDefinition:"+capitalFirst(node.kind)] || 1;
                 that.metrics.ast["ContractDefinition:BaseContracts"] = that.metrics.ast["ContractDefinition:BaseContracts"] + node.baseContracts.length || node.baseContracts.length;
+                try {
+                    that.metrics.other.doppelganger.push(doppelGanger.compareContractAst(node, that.filename));
+                } catch (e) {
+                    console.error(e);
+                }
+                
             },
             FunctionDefinition(node){
                 let stateMutability = node.stateMutability || "internal"; //set default
