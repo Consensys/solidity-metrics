@@ -232,11 +232,12 @@ class SolidityMetricsContainer {
                     }
                 }
 
-                let matchText = [];
-                matchText.push(exact.map((path,i) => `[${i}](${path})`).join(", "));  //exact
-                matchText.push(fuzzy.filter(f => !exact.includes(f)).map((path,i) => `[${i}](${path})`).join(", "));  //fuzzy-exact
-
-                matchText = `exact: ${matchText[0]}<br/>fuzzy: ${matchText[1]}`;
+                let matchText = "";
+                if(exact.length){
+                    matchText = "(exact) " + exact.map((path,i) => `[${i}](${path})`).join(", ");  //exact
+                } else {
+                    matchText = "(fuzzy) " + fuzzy.filter(f => !exact.includes(f)).map((path,i) => `[${i}](${path})`).join(", ");  //fuzzy-exact
+                }
 
                 lines.push(`| ${result.target.path ? result.target.path.replace(that.basePath, "") : ""} | ${result.target.name} | ${matchText} |`);
             }
