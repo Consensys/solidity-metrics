@@ -14,6 +14,14 @@ The number-crunching enginge behind 📊[tintinweb.solidity-metrics](https://mar
 
 ## Example
 
+### CLI
+
+```
+#> node ./src/cli.js <path to solidity file(s)>
+``` 
+
+### Library
+
 ```js
 
 const {SolidityMetricsContainer} = require('solidity-metrics');
