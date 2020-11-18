@@ -13,8 +13,8 @@ const crypto = require('crypto');
 const sloc = require('sloc');
 
 const surya = require('surya');
+const {SolidityDoppelganger} = require('solidity-doppelganger');
 
-const TSHIRT_HR = Object.freeze({"SMALL":"Small", "MEDIUM":"Medium", "LARGE":"Large", "X_LARGE":"X-Large", "XX_LARGE":"XX-Large", "XXXXXX_LARGE":"XXX-Huge!"});
 const TSHIRT = Object.freeze({"SMALL":1, "MEDIUM":2, "LARGE":3, "X_LARGE":4, "XX_LARGE":5, "XXXXXX_LARGE":6});
 
 const tshirtSizes = {
@@ -86,6 +86,8 @@ const scores = {
     "ContractDefinition:BaseContracts":2,
     ContractDefinition:1,
 };
+
+const doppelGanger = new SolidityDoppelganger(); //load this only once
 
 function capitalFirst(string) 
 {
@@ -191,10 +193,69 @@ class SolidityMetricsContainer {
     /**
      * @note: div id must match the SolidityMetricsContainer.getDotGraphs() object key which is also the div-id!
      */
-    generateReportMarkdown(){
-
+    async generateReportMarkdown(){
+        let that = this;
         let totals = this.totals();
 
+        //ugly hacks ahead! :/
+        async function mergeDoppelganger(doppelgangers){
+            let resolved = (await Promise.all(doppelgangers)).filter(r => Object.keys(r.results).length);
+            if(resolved.length == 0){
+                return;
+            }
+            let first = resolved.shift();
+            for(let r of resolved){
+                for (let x of Object.values(r.results)){
+                    first.addResult(x.target, x.matches)
+                }
+            }
+            return first;
+            //otherwise merge all results 
+        }
+
+        function formatDoppelgangerSection(astHashCompareResults){
+            if(!astHashCompareResults || Object.keys(astHashCompareResults.results).length==0){
+                return "";
+            }
+            let lines = [];
+            for(let result of Object.values(astHashCompareResults.results)){
+                //line |file|contract|doppelganger| 
+                //Deduplicate paths
+                let exact = [];
+                let fuzzy = [];
+
+                for(let m of result.matches){
+                    if(m.options.mode.includes("EXACT")){
+                        exact.push(m.path);
+                    } else {
+                        fuzzy.push(m.path);
+                    }
+                }
+
+                let matchText = "";
+                if(exact.length){
+                    matchText = "(exact) " + exact.map((path,i) => `[${i}](${path})`).join(", ");  //exact
+                } else if(fuzzy.length) {
+                    matchText = "(fuzzy) " + fuzzy.filter(f => !exact.includes(f)).map((path,i) => `[${i}](${path})`).join(", ");  //fuzzy-exact
+                }
+
+                lines.push(`| ${result.target.path ? result.target.path.replace(that.basePath, "") : ""} | ${result.target.name} | ${matchText} |`);
+            }
+            return lines.join("\n");
+        }
+            
+        let doppelganger = await mergeDoppelganger(totals.totals.other.doppelganger);
+        let pathToDoppelganger = {};
+        if(doppelganger){
+            for(let r of Object.values(doppelganger.results)){
+                let rpath = r.target.path.replace(this.basePath, "") || "";
+                if(typeof(pathToDoppelganger[rpath])==="undefined"){
+                    pathToDoppelganger[rpath] = [];
+                }
+                pathToDoppelganger[rpath].push(r);
+            }
+        }
+        
         let suryamdreport;
 
         try {
@@ -223,6 +284,7 @@ ${error}
     - [Out of Scope](#t-out-of-scope)
         - [Excluded Source Units](#t-out-of-scope-excluded-source-units)
         - [Duplicate Source Units](#t-out-of-scope-duplicate-source-units)
+        - [Doppelganger Contracts](#t-out-of-scope-doppelganger-contracts)
 - [Report Overview](#t-report)
     - [Risk Summary](#t-risk)
     - [Source Lines](#t-source-lines)
@@ -252,8 +314,8 @@ Source Units in Scope: **\`${this.metrics.length}\`** (**${Math.round(this.metri
 
 | Type | File   | Logic Contracts | Interfaces | Lines | nSLOC | Comment Lines | Complex. Score | Capabilities |
 |========|=================|============|=======|=======|===============|==============|
-${this.metrics.map(m => `| ${m.metrics.num.contracts ? "📝" : ""}${m.metrics.num.libraries ? "📚" : ""}${m.metrics.num.interfaces ? "🔍" : ""} | ${m.filename.replace(this.basePath, "")} | ${(m.metrics.num.contracts + m.metrics.num.libraries) || "****"} | ${m.metrics.num.interfaces || "****"} | ${m.metrics.sloc.total || "****"} | ${m.metrics.nsloc.total || "****"} | ${m.metrics.sloc.comment || "****"} | ${m.metrics.complexity.perceivedNaiveScore || "****"} | **${m.metrics.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${m.metrics.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${m.metrics.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${m.metrics.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${m.metrics.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${m.metrics.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${m.metrics.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${m.metrics.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${m.metrics.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${m.metrics.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}** |`).join("\n")}
-| ${totals.totals.num.contracts ? "📝" : ""}${totals.totals.num.libraries ? "📚" : ""}${totals.totals.num.interfaces ? "🔍" : ""} | **Totals** | **${(totals.totals.num.contracts + totals.totals.num.libraries) || ""}** | **${totals.totals.num.interfaces || ""}** | **${totals.totals.sloc.total}** | **${totals.totals.nsloc.total}** | **${totals.totals.sloc.comment}** | **${totals.totals.complexity.perceivedNaiveScore}** | **${totals.totals.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${totals.totals.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${totals.totals.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${totals.totals.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${totals.totals.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${totals.totals.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${totals.totals.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${totals.totals.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${totals.totals.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${totals.totals.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}** |
+${this.metrics.map(m => `| ${m.metrics.num.contracts ? "📝" : ""}${m.metrics.num.libraries ? "📚" : ""}${m.metrics.num.interfaces ? "🔍" : ""} | ${m.filename.replace(this.basePath, "")} | ${(m.metrics.num.contracts + m.metrics.num.libraries) || "****"} | ${m.metrics.num.interfaces || "****"} | ${m.metrics.sloc.total || "****"} | ${m.metrics.nsloc.total || "****"} | ${m.metrics.sloc.comment || "****"} | ${m.metrics.complexity.perceivedNaiveScore || "****"} | **${m.metrics.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${m.metrics.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${m.metrics.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${m.metrics.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${m.metrics.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${m.metrics.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${m.metrics.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${m.metrics.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${m.metrics.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${m.metrics.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && pathToDoppelganger[m.filename.replace(this.basePath, "")] ? "<abbr title='doppelganger("+pathToDoppelganger[m.filename.replace(this.basePath, "")].length+")'>🔆</abbr>":""}** |`).join("\n")}
+| ${totals.totals.num.contracts ? "📝" : ""}${totals.totals.num.libraries ? "📚" : ""}${totals.totals.num.interfaces ? "🔍" : ""} | **Totals** | **${(totals.totals.num.contracts + totals.totals.num.libraries) || ""}** | **${totals.totals.num.interfaces || ""}** | **${totals.totals.sloc.total}** | **${totals.totals.nsloc.total}** | **${totals.totals.sloc.comment}** | **${totals.totals.complexity.perceivedNaiveScore}** | **${totals.totals.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${totals.totals.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${totals.totals.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${totals.totals.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${totals.totals.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${totals.totals.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${totals.totals.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${totals.totals.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${totals.totals.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${totals.totals.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && Object.keys(pathToDoppelganger).length ? "<abbr title='doppelganger'>🔆</abbr>":""}** |
 
 #### <span id=t-out-of-scope>Out of Scope</span>
 
@@ -279,6 +341,18 @@ Duplicate Source Units Excluded: **\`${this.seenDuplicates.length}\`**
 | File   |
 |========|
 ${this.seenDuplicates.length ? this.seenDuplicates.map(f => `|${f.replace(this.basePath, "")}|`).join("\n") : "| None |"}
+
+</div>
+
+##### <span id=t-out-of-scope-doppelganger-contracts>Doppelganger Contracts</span>
+
+Doppelganger Contracts: **\`${doppelganger && doppelganger.results ? Object.keys(doppelganger.results).length : 0}\`** 
+
+<a onclick="toggleVisibility('doppelganger-contracts', this)">[➕]</a>
+<div id="doppelganger-contracts" style="display:none">
+| File   | Contract | Doppelganger | 
+|========|==========|==============|
+${formatDoppelgangerSection(doppelganger)}
 
 </div>
 
@@ -475,8 +549,9 @@ class Metric {
             ecrecover: false,
             deploysContract: false
         };
-
-        this.xx = 0;
+        this.other = {
+            doppelganger: []
+        };
     }
     
     
@@ -524,7 +599,7 @@ class Metric {
 
     sumCreateNewMetric(...solidityFileMetrics){
         let result = new Metric();
-
+        
         solidityFileMetrics.forEach(a => {  //arguments
             Object.keys(result).forEach(attrib => {  // metric attribs -> object
                 Object.keys(a.metrics[attrib]).map(function(key, index) { // argument.keys		
@@ -534,6 +609,7 @@ class Metric {
                         result[attrib][key] = result[attrib][key] || a.metrics[attrib][key];
                     else if(Array.isArray(a.metrics[attrib][key]))  // concat arrays -> maybe switch to sets 
                         result[attrib][key] = Array.from(new Set([...result[attrib][key], ...a.metrics[attrib][key]]));
+
                 });
             });
         });
@@ -598,6 +674,12 @@ class SolidityFileMetrics {
             ContractDefinition(node) {
                 that.metrics.ast["ContractDefinition:"+capitalFirst(node.kind)] = ++that.metrics.ast["ContractDefinition:"+capitalFirst(node.kind)] || 1;
                 that.metrics.ast["ContractDefinition:BaseContracts"] = that.metrics.ast["ContractDefinition:BaseContracts"] + node.baseContracts.length || node.baseContracts.length;
+                try {
+                    that.metrics.other.doppelganger.push(doppelGanger.compareContractAst(node, that.filename));
+                } catch (e) {
+                    console.error(e);
+                }
+                
             },
             FunctionDefinition(node){
                 let stateMutability = node.stateMutability || "internal"; //set default

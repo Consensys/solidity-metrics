@@ -14,6 +14,14 @@ The number-crunching enginge behind 📊[tintinweb.solidity-metrics](https://mar
 
 ## Example
 
+### CLI
+
+```
+#> node ./src/cli.js <path to solidity file(s)>
+``` 
+
+### Library
+
 ```js
 
 const {SolidityMetricsContainer} = require('solidity-metrics');
@@ -41,5 +49,6 @@ metrics.analyze(path_to_solidity_file_N);
 
 // output
 console.log(metrics.totals());
-console.log(metrics.generateReportMarkdown());
+metrics.generateReportMarkdown().then(text => console.log(text));
+// or let text = await metrics.generateReportMarkdown();
 ```
