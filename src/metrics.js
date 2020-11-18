@@ -13,7 +13,7 @@ const crypto = require('crypto');
 const sloc = require('sloc');
 
 const surya = require('surya');
-const {SolidityDoppelganger} = require('solidity-doppelganger-demo');
+const {SolidityDoppelganger} = require('solidity-doppelganger');
 
 const TSHIRT = Object.freeze({"SMALL":1, "MEDIUM":2, "LARGE":3, "X_LARGE":4, "XX_LARGE":5, "XXXXXX_LARGE":6});
 
@@ -235,7 +235,7 @@ class SolidityMetricsContainer {
                 let matchText = "";
                 if(exact.length){
                     matchText = "(exact) " + exact.map((path,i) => `[${i}](${path})`).join(", ");  //exact
-                } else {
+                } else if(fuzzy.length) {
                     matchText = "(fuzzy) " + fuzzy.filter(f => !exact.includes(f)).map((path,i) => `[${i}](${path})`).join(", ");  //fuzzy-exact
                 }
 
