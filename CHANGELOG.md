@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.11
+- update: solidity-doppelganger to v0.0.4
+
 ## v0.0.8 - v0.0.10
 - updated: surya, solidity parser
 - new: solidity-doppelganger detection
