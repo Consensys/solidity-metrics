@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.12
+- new: support abstract contracts
+
 ## v0.0.11
 - update: solidity-doppelganger to v0.0.4
 

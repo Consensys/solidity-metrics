@@ -314,8 +314,8 @@ Source Units in Scope: **\`${this.metrics.length}\`** (**${Math.round(this.metri
 
 | Type | File   | Logic Contracts | Interfaces | Lines | nSLOC | Comment Lines | Complex. Score | Capabilities |
 |========|=================|============|=======|=======|===============|==============|
-${this.metrics.map(m => `| ${m.metrics.num.contracts ? "📝" : ""}${m.metrics.num.libraries ? "📚" : ""}${m.metrics.num.interfaces ? "🔍" : ""} | ${m.filename.replace(this.basePath, "")} | ${(m.metrics.num.contracts + m.metrics.num.libraries) || "****"} | ${m.metrics.num.interfaces || "****"} | ${m.metrics.sloc.total || "****"} | ${m.metrics.nsloc.total || "****"} | ${m.metrics.sloc.comment || "****"} | ${m.metrics.complexity.perceivedNaiveScore || "****"} | **${m.metrics.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${m.metrics.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${m.metrics.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${m.metrics.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${m.metrics.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${m.metrics.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${m.metrics.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${m.metrics.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${m.metrics.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${m.metrics.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && pathToDoppelganger[m.filename.replace(this.basePath, "")] ? "<abbr title='doppelganger("+pathToDoppelganger[m.filename.replace(this.basePath, "")].map(r => r.target.name).join(", ")+")'>🔆</abbr>":""}** |`).join("\n")}
-| ${totals.totals.num.contracts ? "📝" : ""}${totals.totals.num.libraries ? "📚" : ""}${totals.totals.num.interfaces ? "🔍" : ""} | **Totals** | **${(totals.totals.num.contracts + totals.totals.num.libraries) || ""}** | **${totals.totals.num.interfaces || ""}** | **${totals.totals.sloc.total}** | **${totals.totals.nsloc.total}** | **${totals.totals.sloc.comment}** | **${totals.totals.complexity.perceivedNaiveScore}** | **${totals.totals.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${totals.totals.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${totals.totals.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${totals.totals.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${totals.totals.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${totals.totals.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${totals.totals.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${totals.totals.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${totals.totals.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${totals.totals.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && Object.keys(pathToDoppelganger).length ? "<abbr title='doppelganger'>🔆</abbr>":""}** |
+${this.metrics.map(m => `| ${m.metrics.num.contracts ? "📝" : ""}${m.metrics.num.libraries ? "📚" : ""}${m.metrics.num.interfaces ? "🔍" : ""}${m.metrics.num.abstract ? "🎨" : ""} | ${m.filename.replace(this.basePath, "")} | ${(m.metrics.num.contracts + m.metrics.num.libraries + m.metrics.num.abstract) || "****"} | ${m.metrics.num.interfaces || "****"} | ${m.metrics.sloc.total || "****"} | ${m.metrics.nsloc.total || "****"} | ${m.metrics.sloc.comment || "****"} | ${m.metrics.complexity.perceivedNaiveScore || "****"} | **${m.metrics.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${m.metrics.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${m.metrics.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${m.metrics.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${m.metrics.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${m.metrics.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${m.metrics.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${m.metrics.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${m.metrics.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${m.metrics.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && pathToDoppelganger[m.filename.replace(this.basePath, "")] ? "<abbr title='doppelganger("+pathToDoppelganger[m.filename.replace(this.basePath, "")].map(r => r.target.name).join(", ")+")'>🔆</abbr>":""}** |`).join("\n")}
+| ${totals.totals.num.contracts ? "📝" : ""}${totals.totals.num.libraries ? "📚" : ""}${totals.totals.num.interfaces ? "🔍" : ""}${totals.totals.num.abstract ? "🎨" : ""} | **Totals** | **${(totals.totals.num.contracts + totals.totals.num.libraries + totals.totals.num.abstract) || ""}** | **${totals.totals.num.interfaces || ""}** | **${totals.totals.sloc.total}** | **${totals.totals.nsloc.total}** | **${totals.totals.sloc.comment}** | **${totals.totals.complexity.perceivedNaiveScore}** | **${totals.totals.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${totals.totals.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${totals.totals.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${totals.totals.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${totals.totals.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${totals.totals.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${totals.totals.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${totals.totals.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${totals.totals.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${totals.totals.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && Object.keys(pathToDoppelganger).length ? "<abbr title='doppelganger'>🔆</abbr>":""}** |
 
 #### <span id=t-out-of-scope>Out of Scope</span>
 
@@ -386,9 +386,9 @@ ${this.truffleProjectLocations.length ? "**Truffle Project Locations Observed:**
 
 #### <span id=t-components>Components</span>
 
-| 📝Contracts   | 📚Libraries | 🔍Interfaces |
-|=============|===========|============|
-| ${totals.totals.num.contracts} | ${totals.totals.num.libraries}  | ${totals.totals.num.interfaces}   |
+| 📝Contracts   | 📚Libraries | 🔍Interfaces | 🎨Abstract |
+|=============|===========|============|============|
+| ${totals.totals.num.contracts} | ${totals.totals.num.libraries}  | ${totals.totals.num.interfaces}  | ${totals.totals.num.abstract} |
 
 #### <span id=t-exposed-functions>Exposed Functions</span>
 
@@ -530,6 +530,7 @@ class Metric {
             contracts:0,
             libraries:0,
             interfaces:0,
+            abstract:0,
             imports:0,
             functionsPublic:0,
             functionsPayable:0,
@@ -566,6 +567,7 @@ class Metric {
         this.num.contracts = this.ast["ContractDefinition:Contract"] || 0;
         this.num.libraries = this.ast["ContractDefinition:Library"] || 0;
         this.num.interfaces = this.ast["ContractDefinition:Interface"] || 0;
+        this.num.abstract = this.ast["ContractDefinition:Abstract"] || 0;
         this.num.imports = this.ast["ImportDirective"] || 0;
         this.num.functionsPublic = (this.ast["FunctionDefinition:Public"] || 0) + (this.ast["FunctionDefinition:External"] || 0);
         this.num.functionsPayable = this.ast["FunctionDefinition:Payable"] || 0;
@@ -577,7 +579,7 @@ class Metric {
         // generate human readable ratings
         this.summary.size = tshirtSizes.nsloc(this.nsloc.source);
         this.summary.perceivedComplexity = tshirtSizes.perceivedComplexity(this.complexity.perceivedNaiveScore);
-        this.summary.numLogicContracts = tshirtSizes.files(this.num.contracts+this.num.libraries);
+        this.summary.numLogicContracts = tshirtSizes.files(this.num.contracts+this.num.libraries+this.num.abstract);
         this.summary.interfaceRisk = tshirtSizes.files(this.num.functionsPublic+this.num.functionsPayable);
         this.summary.inlineDocumentation = tshirtSizes.commentRatio(this.nsloc.commentToSourceRatio);
         this.summary.compilerFeatures = tshirtSizes.experimentalFeatures(this.capabilities.experimental);
