@@ -11,7 +11,8 @@ const {SolidityMetricsContainer} = require('./metrics');
 
 let metrics = new SolidityMetricsContainer("containerName", {
     basePath:"",
-    inputFileGlobExclusions:undefined,
+    initDoppelGanger: true,
+    inputFileGlobExclusions: undefined,
     inputFileGlob: undefined,
     inputFileGlobLimit: undefined,
     debug:false,
