@@ -114,7 +114,7 @@ class SolidityMetricsContainer {
         this.debug = args.debug;
         this.repoInfo = args.repoInfo;
 
-        doppelGanger  = args.initDoppelGanger ? new SolidityDoppelganger() : undefined; //load this only once
+        doppelGanger  = (args.disableDoppelGanger === true) ? undefined : new SolidityDoppelganger(); //load this only once
 
         this.seenFiles = [];
         this.seenDuplicates = [];
