@@ -87,7 +87,7 @@ const scores = {
     ContractDefinition:1,
 };
 
-const doppelGanger = new SolidityDoppelganger(); //load this only once
+const doppelGanger;
 
 function capitalFirst(string) 
 {
@@ -113,6 +113,8 @@ class SolidityMetricsContainer {
         this.debug = args.debug;
         this.repoInfo = args.repoInfo;
 
+        doppelGanger  = args.initDoppelGanger ? new SolidityDoppelganger() : undefined; //load this only once
+
         this.seenFiles = [];
         this.seenDuplicates = [];
         this.seenHashes = [];
@@ -122,6 +124,10 @@ class SolidityMetricsContainer {
         this.truffleProjectLocations = [];
         this.excludedFiles = [];
         
+    }
+
+    changeName(paramName){
+        this.name = paramName;
     }
 
     addTruffleProjectLocation(truffleJsPath){
@@ -676,10 +682,12 @@ class SolidityFileMetrics {
             ContractDefinition(node) {
                 that.metrics.ast["ContractDefinition:"+capitalFirst(node.kind)] = ++that.metrics.ast["ContractDefinition:"+capitalFirst(node.kind)] || 1;
                 that.metrics.ast["ContractDefinition:BaseContracts"] = that.metrics.ast["ContractDefinition:BaseContracts"] + node.baseContracts.length || node.baseContracts.length;
-                try {
-                    that.metrics.other.doppelganger.push(doppelGanger.compareContractAst(node, that.filename));
-                } catch (e) {
-                    console.error(e);
+                if(doppelGanger !== undefined) {
+                    try {
+                        that.metrics.other.doppelganger.push(doppelGanger.compareContractAst(node, that.filename));
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
                 
             },
