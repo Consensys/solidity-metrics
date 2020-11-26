@@ -87,7 +87,8 @@ const scores = {
     ContractDefinition:1,
 };
 
-const doppelGanger;
+// we initialize the "immutable" variable in the global scope and only instantiate if there is an argument
+let doppelGanger;
 
 function capitalFirst(string) 
 {
@@ -273,6 +274,22 @@ ${error}
             console.error(error);
         }
 
+        // We are now defining the doppelganger related sections to be included in the Markdown only if doppelGanger was instantiated
+        const doppelgangerToC = (doppelGanger !== undefined) ? `
+        - [Doppelganger Contracts](#t-out-of-scope-doppelganger-contracts)`
+            : '';
+
+        const doppelgangerSection = (doppelGanger !== undefined) ? `##### <span id=t-out-of-scope-doppelganger-contracts>Doppelganger Contracts</span>
+
+Doppelganger Contracts: **\`${doppelganger && doppelganger.results ? Object.keys(doppelganger.results).length : 0}\`** 
+
+<a onclick="toggleVisibility('doppelganger-contracts', this)">[➕]</a>
+<div id="doppelganger-contracts" style="display:none">
+| File   | Contract | Doppelganger | 
+|========|==========|==============|
+${formatDoppelgangerSection(doppelganger)}`
+            : '';
+
         let mdreport_head = `
 [<img width="200" alt="get in touch with Consensys Diligence" src="https://user-images.githubusercontent.com/2865694/56826101-91dcf380-685b-11e9-937c-af49c2510aa0.png">](https://diligence.consensys.net)<br/>
 <sup>
@@ -289,8 +306,7 @@ ${error}
     - [Source Units in Scope](#t-source-Units-in-Scope)
     - [Out of Scope](#t-out-of-scope)
         - [Excluded Source Units](#t-out-of-scope-excluded-source-units)
-        - [Duplicate Source Units](#t-out-of-scope-duplicate-source-units)
-        - [Doppelganger Contracts](#t-out-of-scope-doppelganger-contracts)
+        - [Duplicate Source Units](#t-out-of-scope-duplicate-source-units)${doppelgangerToC}
 - [Report Overview](#t-report)
     - [Risk Summary](#t-risk)
     - [Source Lines](#t-source-lines)
@@ -320,8 +336,8 @@ Source Units in Scope: **\`${this.metrics.length}\`** (**${Math.round(this.metri
 
 | Type | File   | Logic Contracts | Interfaces | Lines | nSLOC | Comment Lines | Complex. Score | Capabilities |
 |========|=================|============|=======|=======|===============|==============|
-${this.metrics.map(m => `| ${m.metrics.num.contracts ? "📝" : ""}${m.metrics.num.libraries ? "📚" : ""}${m.metrics.num.interfaces ? "🔍" : ""}${m.metrics.num.abstract ? "🎨" : ""} | ${m.filename.replace(this.basePath, "")} | ${(m.metrics.num.contracts + m.metrics.num.libraries + m.metrics.num.abstract) || "****"} | ${m.metrics.num.interfaces || "****"} | ${m.metrics.sloc.total || "****"} | ${m.metrics.nsloc.total || "****"} | ${m.metrics.sloc.comment || "****"} | ${m.metrics.complexity.perceivedNaiveScore || "****"} | **${m.metrics.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${m.metrics.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${m.metrics.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${m.metrics.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${m.metrics.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${m.metrics.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${m.metrics.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${m.metrics.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${m.metrics.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${m.metrics.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && pathToDoppelganger[m.filename.replace(this.basePath, "")] ? "<abbr title='doppelganger("+pathToDoppelganger[m.filename.replace(this.basePath, "")].map(r => r.target.name).join(", ")+")'>🔆</abbr>":""}** |`).join("\n")}
-| ${totals.totals.num.contracts ? "📝" : ""}${totals.totals.num.libraries ? "📚" : ""}${totals.totals.num.interfaces ? "🔍" : ""}${totals.totals.num.abstract ? "🎨" : ""} | **Totals** | **${(totals.totals.num.contracts + totals.totals.num.libraries + totals.totals.num.abstract) || ""}** | **${totals.totals.num.interfaces || ""}** | **${totals.totals.sloc.total}** | **${totals.totals.nsloc.total}** | **${totals.totals.sloc.comment}** | **${totals.totals.complexity.perceivedNaiveScore}** | **${totals.totals.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${totals.totals.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${totals.totals.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${totals.totals.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${totals.totals.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${totals.totals.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${totals.totals.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${totals.totals.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${totals.totals.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${totals.totals.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${pathToDoppelganger && Object.keys(pathToDoppelganger).length ? "<abbr title='doppelganger'>🔆</abbr>":""}** |
+${this.metrics.map(m => `| ${m.metrics.num.contracts ? "📝" : ""}${m.metrics.num.libraries ? "📚" : ""}${m.metrics.num.interfaces ? "🔍" : ""}${m.metrics.num.abstract ? "🎨" : ""} | ${m.filename.replace(this.basePath, "")} | ${(m.metrics.num.contracts + m.metrics.num.libraries + m.metrics.num.abstract) || "****"} | ${m.metrics.num.interfaces || "****"} | ${m.metrics.sloc.total || "****"} | ${m.metrics.nsloc.total || "****"} | ${m.metrics.sloc.comment || "****"} | ${m.metrics.complexity.perceivedNaiveScore || "****"} | **${m.metrics.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${m.metrics.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${m.metrics.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${m.metrics.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${m.metrics.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${m.metrics.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${m.metrics.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${m.metrics.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${m.metrics.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${m.metrics.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${(doppelGanger === undefined) ? '_Not Applicable_' : pathToDoppelganger && pathToDoppelganger[m.filename.replace(this.basePath, "")] ? "<abbr title='doppelganger("+pathToDoppelganger[m.filename.replace(this.basePath, "")].map(r => r.target.name).join(", ")+")'>🔆</abbr>":""}** |`).join("\n")}
+| ${totals.totals.num.contracts ? "📝" : ""}${totals.totals.num.libraries ? "📚" : ""}${totals.totals.num.interfaces ? "🔍" : ""}${totals.totals.num.abstract ? "🎨" : ""} | **Totals** | **${(totals.totals.num.contracts + totals.totals.num.libraries + totals.totals.num.abstract) || ""}** | **${totals.totals.num.interfaces || ""}** | **${totals.totals.sloc.total}** | **${totals.totals.nsloc.total}** | **${totals.totals.sloc.comment}** | **${totals.totals.complexity.perceivedNaiveScore}** | **${totals.totals.capabilities.assembly ? "<abbr title='Uses Assembly'>🖥</abbr>":""}${totals.totals.capabilities.experimental.length ? "<abbr title='Experimental Features'>🧪</abbr>":""}${totals.totals.capabilities.canReceiveFunds ? "<abbr title='Payable Functions'>💰</abbr>":""}${totals.totals.capabilities.destroyable ? "<abbr title='Destroyable Contract'>💣</abbr>":""}${totals.totals.capabilities.explicitValueTransfer ? "<abbr title='Initiates ETH Value Transfer'>📤</abbr>":""}${totals.totals.capabilities.lowLevelCall ? "<abbr title='Performs Low-Level Calls'>⚡</abbr>":""}${totals.totals.capabilities.delegateCall ? "<abbr title='DelegateCall'>👥</abbr>":""}${totals.totals.capabilities.hashFuncs ? "<abbr title='Uses Hash-Functions'>🧮</abbr>":""}${totals.totals.capabilities.ecrecover ? "<abbr title='Handles Signatures: ecrecover'>🔖</abbr>":""}${totals.totals.capabilities.deploysContract ? "<abbr title='create/create2'>🌀</abbr>":""}${(doppelGanger === undefined) ? '_Not Applicable_' : pathToDoppelganger && Object.keys(pathToDoppelganger).length ? "<abbr title='doppelganger'>🔆</abbr>":""}** |
 
 #### <span id=t-out-of-scope>Out of Scope</span>
 
@@ -350,15 +366,7 @@ ${this.seenDuplicates.length ? this.seenDuplicates.map(f => `|${f.replace(this.b
 
 </div>
 
-##### <span id=t-out-of-scope-doppelganger-contracts>Doppelganger Contracts</span>
-
-Doppelganger Contracts: **\`${doppelganger && doppelganger.results ? Object.keys(doppelganger.results).length : 0}\`** 
-
-<a onclick="toggleVisibility('doppelganger-contracts', this)">[➕]</a>
-<div id="doppelganger-contracts" style="display:none">
-| File   | Contract | Doppelganger | 
-|========|==========|==============|
-${formatDoppelgangerSection(doppelganger)}
+${doppelgangerSection}
 
 </div>
 
