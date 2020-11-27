@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.13
+- fix: add option to disable solidity doppelganger (e.g. for in-browser use of solidity-metrics) - #2
+
 ## v0.0.12
 - new: support abstract contracts
 
