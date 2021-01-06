@@ -1,6 +1,6 @@
 {
   "name": "solidity-code-metrics",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Solidity Code Metrics",
   "main": "src/index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     "@solidity-parser/parser": "^0.11.0",
     "sloc": "^0.2.1",
     "solidity-doppelganger": "0.0.4",
-    "surya": "^0.4.1"
+    "surya": "^0.4.2"
   }
 }

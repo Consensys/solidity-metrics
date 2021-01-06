@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.15
+- update: surya to 0.4.2
+
 ## v0.0.14
 - fix: **IMPORTANT** nSLOC metric in the table displayed all normalized source lines (including comments, blank lines) instead of normalized source code lines only. This has been changed with this release. `nSLOC` now displays normalized source-code lines (no comments, blank lines). The new column `nLines`  now displays the value that was formerly displayed for `nSLOC`. - #3
 
