@@ -35,7 +35,7 @@ let metrics = new SolidityMetricsContainer("containerName", {
     console.log(metrics.generateReportMarkdown());
  */
 
-const {SolidityMetricsContainer} = require('./metrics');
+const {SolidityMetricsContainer} = require('./metrics/metrics');
 
 module.exports = {
     SolidityMetricsContainer

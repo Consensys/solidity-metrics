@@ -7,7 +7,7 @@
  * */
 
 
-const {SolidityMetricsContainer} = require('./metrics');
+const {SolidityMetricsContainer} = require('./metrics/metrics');
 
 let metrics = new SolidityMetricsContainer("containerName", {
     basePath:"",
@@ -33,5 +33,3 @@ process.argv.slice(1,).forEach(f => {
 // output
 //console.log(metrics.totals());
 metrics.generateReportMarkdown().then(text => console.log(text));
-
-
