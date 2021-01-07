@@ -62,7 +62,6 @@ class SolidityMetricsContainer {
     }
 
     analyze(inputFileGlobs){
-
         return this.analyzeFile(inputFileGlobs);
     }
 
@@ -101,7 +100,7 @@ class SolidityMetricsContainer {
 
     totals(){
         let total = {
-            totals : new Metric(),
+            totals: new Metric(),
             avg: new Metric(),
             num: {
                 sourceUnits: this.seenFiles.length,
@@ -237,6 +236,7 @@ ${formatDoppelgangerSection(doppelganger)}`
     - [Exposed Functions](#t-exposed-functions)
     - [StateVariables](#t-statevariables)
     - [Capabilities](#t-capabilities)
+    - [Dependencies](#t-package-imports)
     - [Totals](#t-totals)
 
 ## <span id=t-scope>Scope</span>
@@ -364,12 +364,21 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | Solidity Versions observed | 🧪 Experimental Features | 💰 Can Receive Funds | 🖥 Uses Assembly | 💣 Has Destroyable Contracts | 
 |============|===========|===========|===========|
-| ${totals.totals.capabilities.solidityVersions.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.experimental.map( v => `\`${v}\``).join("<br/>")} | \`${totals.totals.capabilities.canReceiveFunds ? "yes" : "no"}\` | \`${totals.totals.capabilities.assembly ? "yes" : "no"}\`<br/>(${totals.totals.num.assemblyBlocks} asm blocks) | \`${totals.totals.capabilities.destroyable ? "yes" : "no"}\` | 
+| ${totals.totals.capabilities.solidityVersions.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.experimental.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.canReceiveFunds ? "`yes`" : "****"} | ${totals.totals.capabilities.assembly ? "`yes`" : "****"}<br/>(${totals.totals.num.assemblyBlocks} asm blocks) | ${totals.totals.capabilities.destroyable ? "`yes`" : "****"} | 
 
 | 📤 Transfers ETH | ⚡ Low-Level Calls | 👥 DelegateCall | 🧮 Uses Hash Functions | 🔖 ECRecover | 🌀 New/Create/Create2 |
 |============|===========|===========|===========|===========|
-| \`${totals.totals.capabilities.explicitValueTransfer ? "yes" : "no"}\` | \`${totals.totals.capabilities.lowLevelCall ? "yes" : "no"}\` | \`${totals.totals.capabilities.delegateCall ? "yes" : "no"}\` | \`${totals.totals.capabilities.hashFuncs ? "yes" : "no"}\` | \`${totals.totals.capabilities.ecrecover ? "yes" : "no"}\` | \`${totals.totals.capabilities.deploysContract ? "yes" : "no"}\`<br>${Object.keys(totals.totals.ast).filter(k => k.match(/(NewContract:|AssemblyCall:Name:create|AssemblyCall:Name:create2)/g)).map( k => `→ \`${k}\``).join("<br/>")} | 
+| ${totals.totals.capabilities.explicitValueTransfer ? "`yes`" : "****"} | ${totals.totals.capabilities.lowLevelCall ? "`yes`" : "****"} | ${totals.totals.capabilities.delegateCall ? "`yes`" : "****"} | ${totals.totals.capabilities.hashFuncs ? "`yes`" : "****"} | ${totals.totals.capabilities.ecrecover ? "`yes`" : "****"} | ${totals.totals.capabilities.deploysContract ? "`yes`<br>" : "****"}${Object.keys(totals.totals.ast).filter(k => k.match(/(NewContract:|AssemblyCall:Name:create|AssemblyCall:Name:create2)/g)).map( k => `→ \`${k}\``).join("<br/>")} | 
 
+#### <span id=t-package-imports>Dependencies / External Imports</span>
+
+| Dependency / Import Path | Count  | 
+|==========================|========|
+${Object.keys(totals.totals.ast)
+    .filter(k => k.startsWith("ImportDirective:Path:"))
+    .map(ki => `| ${ki.replace("ImportDirective:Path:","")} | ${totals.totals.ast[ki]} |`)
+    .join("\n")
+}
 
 #### <span id=t-totals>Totals</span>
 
@@ -623,6 +632,12 @@ class SolidityFileMetrics {
                     that.metrics.capabilities.experimental.push(node.value);
                 } else if(node.name.toLowerCase().indexOf("solidity")>=0){
                     that.metrics.capabilities.solidityVersions.push(node.value);
+                }
+            },
+            ImportDirective(node){
+                if(node.path && !node.path.startsWith(".")){
+                    // track all package dependencies, assuming they give information about the systems capabilities (e.g. erc20, oracles, ...)
+                    that.metrics.ast["ImportDirective:Path:"+node.path] = ++that.metrics.ast["ImportDirective:Path:"+node.path] || 1;
                 }
             },
             ContractDefinition(node) {
