@@ -376,6 +376,7 @@ This section lists functions that are explicitly declared public or payable. Ple
 |==========================|========|
 ${Object.keys(totals.totals.ast)
     .filter(k => k.startsWith("ImportDirective:Path:"))
+    .sort()
     .map(ki => `| ${ki.replace("ImportDirective:Path:","")} | ${totals.totals.ast[ki]} |`)
     .join("\n")
 }

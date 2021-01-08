@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.16
+- update: doppelganger to 0.0.5 (updating parser)
+- new: metric: external dependencies - lists all external imports. 
+    - imports may be an indicator of the capabilities and code-patterns used in a contract system.
+
+![image](https://user-images.githubusercontent.com/2865694/103999393-1e008d00-519d-11eb-9ccd-77e1387781b1.png)
+
 ## v0.0.15
 - update: surya to 0.4.2
 
