@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.18
+- update: updated solidity doppelganger/regenerate patterns
+  
 ## v0.0.17
 - update: solidity parser to 0.13.2
 
