@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.17
+- update: solidity parser to 0.13.2
+
 ## v0.0.16
 - update: doppelganger to 0.0.5 (updating parser)
 - new: metric: external dependencies - lists all external imports. 
