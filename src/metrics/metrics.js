@@ -92,10 +92,21 @@ class SolidityMetricsContainer {
     }
 
     getDotGraphs(){
-        return {
-            '#surya-inheritance':surya.inheritance(this.seenFiles,{draggable:false}),  //key must match the div-id in the markdown template!
-            '#surya-callgraph':surya.graph(this.seenFiles)
-        };
+        let ret = {};
+
+        try {
+            ret['#surya-inheritance'] = surya.inheritance(this.seenFiles,{draggable:false});  //key must match the div-id in the markdown template!
+        } catch (e) {
+            console.error(e);
+        }
+
+        try {
+            ret['#surya-callgraph'] = surya.graph(this.seenFiles);
+        } catch (e) {
+            console.error(e);
+        }
+
+        return ret;
     }
 
     totals(){
