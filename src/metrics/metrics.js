@@ -364,7 +364,7 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | Solidity Versions observed | 🧪 Experimental Features | 💰 Can Receive Funds | 🖥 Uses Assembly | 💣 Has Destroyable Contracts | 
 |============|===========|===========|===========|
-| ${totals.totals.capabilities.solidityVersions.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.experimental.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.canReceiveFunds ? "`yes`" : "****"} | ${totals.totals.capabilities.assembly ? "`yes`" : "****"}<br/>(${totals.totals.num.assemblyBlocks} asm blocks) | ${totals.totals.capabilities.destroyable ? "`yes`" : "****"} | 
+| ${totals.totals.capabilities.solidityVersions.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.experimental.map( v => `\`${v}\``).join("<br/>")} | ${totals.totals.capabilities.canReceiveFunds ? "`yes`" : "****"} | ${totals.totals.capabilities.assembly ? `\`yes\` <br/>(${totals.totals.num.assemblyBlocks} asm blocks)` : "****"} | ${totals.totals.capabilities.destroyable ? "`yes`" : "****"} | 
 
 | 📤 Transfers ETH | ⚡ Low-Level Calls | 👥 DelegateCall | 🧮 Uses Hash Functions | 🔖 ECRecover | 🌀 New/Create/Create2 |
 |============|===========|===========|===========|===========|
