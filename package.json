@@ -1,6 +1,6 @@
 {
   "name": "solidity-code-metrics",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Solidity Code Metrics",
   "main": "src/index.js",
   "scripts": {
