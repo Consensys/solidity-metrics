@@ -92,7 +92,10 @@ class SolidityMetricsContainer {
     }
 
     getDotGraphs(){
-        let ret = {};
+        let ret = {
+            '#surya-inheritance':"",
+            '#surya-callgraph':""
+        };
 
         try {
             ret['#surya-inheritance'] = surya.inheritance(this.seenFiles,{draggable:false});  //key must match the div-id in the markdown template!
