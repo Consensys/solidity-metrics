@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict';
 /** 
  * @author github.com/tintinweb

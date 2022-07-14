@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.20
+- new: added `solidity-code-metrics` command
+- new: updated solidity-parser, solidity-doppelganger
+
 ## v0.0.19
 - new: metrics for `tryCatch` and `unchecked` blocks
 

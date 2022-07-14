@@ -1,8 +1,11 @@
 {
   "name": "solidity-code-metrics",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Solidity Code Metrics",
   "main": "src/index.js",
+  "bin": {
+    "solidity-code-metrics": "src/cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,9 +28,9 @@
   },
   "homepage": "https://github.com/ConsenSys/solidity-metrics#readme",
   "dependencies": {
-    "@solidity-parser/parser": "^0.13.2",
+    "@solidity-parser/parser": "^0.14.3",
     "sloc": "^0.2.1",
-    "solidity-doppelganger": "0.0.7",
+    "solidity-doppelganger": "^0.0.9",
     "surya": "^0.4.2"
   }
 }
