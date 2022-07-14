@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.21
+- new: CLI option `--html` - generates a standalone html report (default markdown)
+
 ## v0.0.20
 - new: added `solidity-code-metrics` command
 - new: updated solidity-parser, solidity-doppelganger
