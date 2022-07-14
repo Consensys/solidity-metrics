@@ -1,0 +1,43 @@
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="ConsenSys Diligence - Solidity Metrics Report">
+    <meta name="author" content="tintinweb.solidity-metrics">
+    <meta name="url" content="https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-metrics">
+    <meta name="robots" content="noindex"/>
+
+	<title>Solidity Metrics</title>
+    <script src="js/Chart.bundle.min.js"></script>
+    <script src="js/chartjs-plugin-colorschemes.min.js"></script>
+
+    <script src="js/showdown.min.js"></script>
+    <script src="js/showdown-table.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/github-markdown.css"/>
+
+    <!-- d3graphviz and graphvizSvg: dot visualization -->
+    <script src="js/d3graphviz/viz.js"></script>
+    <script src="js/d3graphviz/d3.min.js"></script>
+    <script src="js/d3graphviz/d3-graphviz.min.js"></script>
+    <!-- report -->
+    <script src="main.js"></script>
+    <script>
+        function toggleVisibility(id, anchor) {
+            if(document.getElementById(id).style.display=="none"){
+                document.getElementById(id).style.display = "block";
+                anchor.text="[➖]";
+            } else {
+                document.getElementById(id).style.display = "none";
+                anchor.text="[➕]";
+            }
+        }
+    </script>
+    <!--/*** %%static_metrics%% ***/-->
+</head>
+<body>
+    <div id="loading-msg">Rendering Report... 
+        <br><br>
+        <sub><b>Note: </b>This window will update automatically. In case it is not, close the window and try again (vscode bug) :/</sub>
+    </div>
+    <div class=content id="preview"></div>
+</body>
+</html>

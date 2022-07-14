@@ -9,6 +9,7 @@
 
 
 const {SolidityMetricsContainer} = require('./metrics/metrics');
+const {exportAsHtml} = require('./metrics/helper');
 
 let metrics = new SolidityMetricsContainer("containerName", {
     basePath:"",
@@ -24,8 +25,12 @@ let metrics = new SolidityMetricsContainer("containerName", {
     }
 });
 
+let options = [];
+
 process.argv.slice(1,).forEach(f => {
-    if(f.endsWith(".sol")){
+    if(f.startsWith("--")){
+        options.push(f);
+    } else if(f.endsWith(".sol")){
         // analyze files
         metrics.analyze(f);
     } 
@@ -33,4 +38,18 @@ process.argv.slice(1,).forEach(f => {
 
 // output
 //console.log(metrics.totals());
-metrics.generateReportMarkdown().then(text => console.log(text));
+let dotGraphs = {};
+try {
+    dotGraphs = metrics.getDotGraphs();
+} catch (error) {
+    console.log(error);
+}
+
+metrics.generateReportMarkdown().then(md => {
+    
+    if(options.includes("--html")){
+        console.log(exportAsHtml(md, metrics.totals(), dotGraphs));
+    } else {
+        console.log(md);
+    }
+});
