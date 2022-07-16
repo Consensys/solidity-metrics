@@ -7,9 +7,10 @@
  * 
  * */
 
-
+const glob = require("glob");
 const {SolidityMetricsContainer} = require('./metrics/metrics');
 const {exportAsHtml} = require('./metrics/helper');
+
 
 let metrics = new SolidityMetricsContainer("containerName", {
     basePath:"",
@@ -32,7 +33,7 @@ process.argv.slice(1,).forEach(f => {
         options.push(f);
     } else if(f.endsWith(".sol")){
         // analyze files
-        metrics.analyze(f);
+        glob.sync(f).forEach(fg => metrics.analyze(fg));
     } 
 });
 

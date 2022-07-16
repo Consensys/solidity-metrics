@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "solidity-visual-auditor" extension will be documented in this file.
 
+## v0.0.22
+- new: CLI glob resolve provided paths
+- update: dependencies
+
 ## v0.0.21
 - new: CLI option `--html` - generates a standalone html report (default markdown)
 

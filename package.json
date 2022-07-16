@@ -1,6 +1,6 @@
 {
   "name": "solidity-code-metrics",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Solidity Code Metrics",
   "main": "src/index.js",
   "bin": {
@@ -29,8 +29,9 @@
   "homepage": "https://github.com/ConsenSys/solidity-metrics#readme",
   "dependencies": {
     "@solidity-parser/parser": "^0.14.3",
+    "glob": "^8.0.3",
     "sloc": "^0.2.1",
-    "solidity-doppelganger": "^0.0.9",
+    "solidity-doppelganger": "^0.0.10",
     "surya": "^0.4.2"
   }
 }
