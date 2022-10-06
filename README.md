@@ -16,9 +16,26 @@ The number-crunching enginge behind 📊[tintinweb.solidity-metrics](https://mar
 
 ### CLI
 
-```
-#> node ./src/cli.js <path to solidity file(s)>
+To use the CLI from the compiled sources you can do:
+
+```sh
+node ./src/cli.js <path to solidity file(s)>
 ``` 
+
+It is however more useful to install solidity-metrics globally and call it from any directory:
+
+```sh
+npm install -g solidity-code-metrics
+solidity-code-metrics myfile1.sol myfile2.sol
+```
+
+By default, the cli outputs to the console, you can however store the output in a file rather easily (both markdown and html are supported):
+
+```sh
+solidity-code-metrics myfile.sol > metrics.md
+solidity-code-metrics myfile.sol --html > metrics.html
+```
+
 
 ### Library
 
