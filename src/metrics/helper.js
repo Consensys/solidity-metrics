@@ -62,7 +62,9 @@ function exportAsHtml(markdownTemplate, jsonData, dotGraphs) {
         <script>
             let staticMetrics = ${JSON.stringify(data)};
 
-            window.postMessage({"command":"renderReport", value:staticMetrics}, '*')
+            window.addEventListener('load', function() {
+                window.postMessage({"command":"renderReport", value:staticMetrics}, '*')
+            });
         </script>`;
     
     return result.index.replace("<!--/*** %%static_metrics%% ***/-->", staticJsCss);
