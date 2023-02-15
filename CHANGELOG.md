@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to "solidity-code-metrics" will be documented in this file.
 
+## v0.0.23
+- fixes: crhome rendering issues - #10 
+- fixes: invalid table markdown - #7 
+- update: dependencies
+
 ## v0.0.22
 - new: CLI glob resolve provided paths
 - update: dependencies
