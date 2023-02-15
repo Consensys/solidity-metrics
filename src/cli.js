@@ -12,7 +12,7 @@ const {SolidityMetricsContainer} = require('./metrics/metrics');
 const {exportAsHtml} = require('./metrics/helper');
 
 
-let metrics = new SolidityMetricsContainer("containerName", {
+let metrics = new SolidityMetricsContainer("'CLI'", {
     basePath:"",
     initDoppelGanger: undefined,
     inputFileGlobExclusions: undefined,
