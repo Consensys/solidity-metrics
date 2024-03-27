@@ -839,7 +839,7 @@ class Metric {
     this.complexity.perceivedNaiveScore = 0;
     Object.keys(this.ast).map(function (value, index) {
       this.complexity.perceivedNaiveScore +=
-        this.ast[value] * (scores[value] || 0);
+        scores[value] ? this.ast[value] * (scores[value] || 0) : 0;
     }, this);
 
     this.num.contractDefinitions = this.ast['ContractDefinition'] || 0;
