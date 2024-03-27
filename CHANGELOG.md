@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to "solidity-code-metrics" will be documented in this file.
 
+## v0.0.26
+- new: show deployable contracts - #19
+- new: users can provide a scope file - #17
+
 ## v0.0.23
 - fixes: crhome rendering issues - #10 
 - fixes: invalid table markdown - #7 
