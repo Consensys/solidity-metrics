@@ -233,6 +233,29 @@ Doppelganger Contracts: **\`${doppelganger && doppelganger.results ? Object.keys
 ${formatDoppelgangerSection(doppelganger)}`
             : '';
 
+        function formatDeployables(deployableContracts, howMany){
+            if(deployableContracts.length < howMany){
+                return `${totals.other.deployableContracts.map( v => `* 📝 \`${v}\``).join("\n")}`
+            }
+            const shownItems = `${totals.other.deployableContracts.slice(0, howMany).map( v => `* 📝 \`${v}\``).join("\n")}`
+            const hideItems = `${totals.other.deployableContracts.slice(howMany).map( v => `* 📝 \`${v}\``).join("\n")}`
+            return `${shownItems}
+* <a onclick="toggleVisibility('deployables', this)">[➕]</a>
+<div id="deployables" style="display:none">
+${hideItems}
+</div>
+            `
+        }
+        const deployableContractsSection = `
+##### <span id=t-deployable-contracts>Deployable Logic Contracts</span>
+
+Num: ${totals.other.deployableContracts.length}
+
+${formatDeployables(totals.other.deployableContracts, 5)}
+`
+
+        
+
         let mdreport_head = `
 [<img width="200" alt="get in touch with Consensys Diligence" src="https://user-images.githubusercontent.com/2865694/56826101-91dcf380-685b-11e9-937c-af49c2510aa0.png">](https://consensys.io/diligence)<br/>
 <sup>
@@ -299,9 +322,7 @@ Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
 </div>
 </sub>
 
-##### <span id=t-deployable-contracts>Deployable Logic Contracts</span>
-
-${totals.other.deployableContracts.map( v => `* 📝 \`${v}\``).join("\n")}
+${deployableContractsSection}
 
 
 #### <span id=t-out-of-scope>Out of Scope</span>
