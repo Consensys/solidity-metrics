@@ -280,11 +280,13 @@ ${formatDoppelgangerSection(doppelganger)}`
                 return `${totals.other.deployableContracts.map( v => `* 📝 \`${v}\``).join("\n")}`
             }
             const shownItems = `${totals.other.deployableContracts.slice(0, howMany).map( v => `* 📝 \`${v}\``).join("\n")}`
-            const hideItems = `${totals.other.deployableContracts.slice(howMany).map( v => `* 📝 \`${v}\``).join("\n")}`
+            const hideItems = `${totals.other.deployableContracts.slice(howMany).map( v => `<li> 📝 <code>${v}</code></li>`).join("\n")}`
             return `${shownItems}
 * <a onclick="toggleVisibility('deployables', this)">[➕]</a>
 <div id="deployables" style="display:none">
+<ul>
 ${hideItems}
+</ul>
 </div>
             `
         }
