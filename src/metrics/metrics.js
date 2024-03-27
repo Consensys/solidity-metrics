@@ -133,6 +133,9 @@ class SolidityMetricsContainer {
         duplicates: this.seenDuplicates.length,
         errors: this.errors.length,
       },
+      other: {
+        deployableContracts: [],
+      }
     };
 
     total.totals = total.totals.sumCreateNewMetric(...this.metrics);
@@ -141,7 +144,10 @@ class SolidityMetricsContainer {
     total.avg = total.avg.sumAvgCreateNewMetric(...this.metrics);
     total.totals.nsloc.commentToSourceRatio =
       total.totals.nsloc.comment / total.totals.nsloc.source;
-
+    //find deployable contracts
+    const allInheritedNamesSomewhere = total.totals.ast['ContractDefinition:BaseContractNames'];
+    const allLogicContracts = total.totals.ast['ContractDefinition:LogicContractNames']
+    total.other.deployableContracts = [... new Set(allLogicContracts.filter(b => !allInheritedNamesSomewhere.includes(b)))];
     return total;
   }
 
@@ -269,10 +275,29 @@ Doppelganger Contracts: **\`${
 ${formatDoppelgangerSection(doppelganger)}`
         : '';
 
+        function formatDeployables(deployableContracts, howMany){
+            if(deployableContracts.length < howMany){
+                return `${totals.other.deployableContracts.map( v => `* 📝 \`${v}\``).join("\n")}`
+            }
+            const shownItems = `${totals.other.deployableContracts.slice(0, howMany).map( v => `* 📝 \`${v}\``).join("\n")}`
+            const hideItems = `${totals.other.deployableContracts.slice(howMany).map( v => `* 📝 \`${v}\``).join("\n")}`
+            return `${shownItems}
+* <a onclick="toggleVisibility('deployables', this)">[➕]</a>
+<div id="deployables" style="display:none">
+${hideItems}
+</div>
+            `
+        }
+        const deployableContractsSection = `
+##### <span id=t-deployable-contracts>Deployable Logic Contracts</span>
+Total: ${totals.other.deployableContracts.length}
+${formatDeployables(totals.other.deployableContracts, 5)}
+`
+
     let mdreport_head = `
-[<img width="200" alt="get in touch with Consensys Diligence" src="https://user-images.githubusercontent.com/2865694/56826101-91dcf380-685b-11e9-937c-af49c2510aa0.png">](https://diligence.consensys.net)<br/>
+[<img width="200" alt="get in touch with Consensys Diligence" src="https://user-images.githubusercontent.com/2865694/56826101-91dcf380-685b-11e9-937c-af49c2510aa0.png">](https://consensys.io/diligence)<br/>
 <sup>
-[[  🌐  ](https://diligence.consensys.net)  [  📩  ](mailto:diligence@consensys.net)  [  🔥  ](https://consensys.github.io/diligence/)]
+[[  🌐  ](https://consensys.io/diligence)  [  📩  ](mailto:diligence@consensys.net)  [  🔥  ](https://consensys.io/diligence/tools/)]
 </sup><br/><br/>
 
 
@@ -283,6 +308,7 @@ ${formatDoppelgangerSection(doppelganger)}`
 
 - [Scope](#t-scope)
     - [Source Units in Scope](#t-source-Units-in-Scope)
+        - [Deployable Logic Contracts](#t-deployable-contracts)
     - [Out of Scope](#t-out-of-scope)
         - [Excluded Source Units](#t-out-of-scope-excluded-source-units)
         - [Duplicate Source Units](#t-out-of-scope-duplicate-source-units)${doppelgangerToC}
@@ -498,6 +524,8 @@ Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
 
 </div>
 </sub>
+
+${deployableContractsSection}
 
 
 #### <span id=t-out-of-scope>Out of Scope</span>
@@ -725,7 +753,7 @@ ${suryamdreport}
 </div>
 ____
 <sub>
-Thinking about smart contract security? We can provide training, ongoing advice, and smart contract auditing. [Contact us](https://diligence.consensys.net/contact/).
+Thinking about smart contract security? We can provide training, ongoing advice, and smart contract auditing. [Contact us](https://consensys.io/diligence/contact/).
 </sub>
 
 `;
@@ -811,7 +839,7 @@ class Metric {
     this.complexity.perceivedNaiveScore = 0;
     Object.keys(this.ast).map(function (value, index) {
       this.complexity.perceivedNaiveScore +=
-        this.ast[value] * (scores[value] || 0);
+        scores[value] ? this.ast[value] * (scores[value] || 0) : 0;
     }, this);
 
     this.num.contractDefinitions = this.ast['ContractDefinition'] || 0;
@@ -915,7 +943,7 @@ class Metric {
           else if (Array.isArray(a.metrics[attrib][key]))
             // concat arrays -> maybe switch to sets
             result[attrib][key] = Array.from(
-              new Set([...result[attrib][key], ...a.metrics[attrib][key]])
+              new Set([...(result[attrib][key] ?? []), ...a.metrics[attrib][key]])
             );
         });
       });
@@ -998,6 +1026,17 @@ class SolidityFileMetrics {
         that.metrics.ast['ContractDefinition:BaseContracts'] =
           that.metrics.ast['ContractDefinition:BaseContracts'] +
             node.baseContracts.length || node.baseContracts.length;
+
+        if(node.kind == 'contract'){
+            if(!that.metrics.ast["ContractDefinition:LogicContractNames"]){
+                that.metrics.ast["ContractDefinition:LogicContractNames"] = [];
+            }
+            that.metrics.ast["ContractDefinition:LogicContractNames"].push(node.name)
+        }
+        that.metrics.ast["ContractDefinition:BaseContractNames"] = 
+            [...(that.metrics.ast["ContractDefinition:BaseContractNames"] ?? []), 
+            ...node.baseContracts.map((spec) => spec.baseName.namePath)];
+
         if (doppelGanger !== undefined) {
           try {
             that.metrics.other.doppelganger.push(
