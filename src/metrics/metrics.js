@@ -145,8 +145,8 @@ class SolidityMetricsContainer {
     total.totals.nsloc.commentToSourceRatio =
       total.totals.nsloc.comment / total.totals.nsloc.source;
     //find deployable contracts
-    const allInheritedNamesSomewhere = total.totals.ast['ContractDefinition:BaseContractNames'];
-    const allLogicContracts = total.totals.ast['ContractDefinition:LogicContractNames']
+    const allInheritedNamesSomewhere = total.totals.ast['ContractDefinition:BaseContractNames'] ?? [];
+    const allLogicContracts = total.totals.ast['ContractDefinition:LogicContractNames'] ?? [];
     total.other.deployableContracts = [... new Set(allLogicContracts.filter(b => !allInheritedNamesSomewhere.includes(b)))];
     return total;
   }
