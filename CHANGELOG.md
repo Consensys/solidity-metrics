@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to "solidity-code-metrics" will be documented in this file.
 
+## v0.0.27
+- new: fix exception when scoping non logic contracts - #20 
+- update: dependencies
+
 ## v0.0.26
 - new: show deployable contracts - #19
 - new: users can provide a scope file - #17
