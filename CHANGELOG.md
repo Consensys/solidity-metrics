@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to "solidity-code-metrics" will be documented in this file.
 
+## v0.0.28
+- fix: mdreport prints object promise instead of sha1sum #22
+- update: dependencies
+
+
 ## v0.0.27
 - new: fix exception when scoping non logic contracts - #20 
 - update: dependencies
