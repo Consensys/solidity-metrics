@@ -242,7 +242,7 @@ class SolidityMetricsContainer {
       suryamdreport = surya
         .mdreport(this.seenFiles)
         .replace('### ', '#####')
-        .replace("## Sūrya's Description Report", '')
+        .replace("Sūrya's Description Report", '')
         .replace(this.basePathRegex, ''); /* remove surya title, fix layout */
     } catch (error) {
       suryamdreport = `\`\`\`

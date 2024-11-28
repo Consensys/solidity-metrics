@@ -30,8 +30,8 @@
   "dependencies": {
     "@solidity-parser/parser": "^0.18.0",
     "glob": "^10.3.15",
-    "sloc": "^0.3.0",
+    "sloc": "^0.3.2",
     "solidity-doppelganger": "^0.0.11",
-    "surya": "^0.4.6"
+    "surya": "^0.4.12"
   }
 }
